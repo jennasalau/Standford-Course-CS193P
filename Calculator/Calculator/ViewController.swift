@@ -16,7 +16,19 @@ class ViewController: UIViewController
     */
     @IBOutlet weak var display: UILabel!;
     
-    var userIsInTheMiddleOfTypingANumber: Bool = false;
+    var userIsInTheMiddleOfTypingANumber = false;
+    
+    var operandStack = Array<Double>();
+    
+    var displayValue: Double {
+        get{
+            return NSNumberFormatter().numberFromString(display.text!)!.doubleValue;
+        }
+        set{
+            userIsInTheMiddleOfTypingANumber = false;
+            display.text = "\(newValue)";
+        }
+    }
     
     
     /*
@@ -40,6 +52,59 @@ class ViewController: UIViewController
     *   =================================================================
     */
     
+    @IBAction func operate(sender: UIButton) {
+        let operation = sender.currentTitle!;
+        
+        if(userIsInTheMiddleOfTypingANumber)
+        {
+            enter();
+        }
+        
+        switch operation{
+            case "×":
+                performOperation{ $0 * $1};
+                break;
+            case "÷":
+                performOperation{ $1 / $0};
+                break;
+            case "+":
+                performOperation{ $0 + $1};
+                break;
+            case "−":
+                performOperation{ $1 * $0};
+                break;
+            case "√":
+                performCoreOperation{ sqrt($0) };
+                break;
+            default:
+                break;
+        }
+    }
+    
+    func performOperation(operation: (Double, Double) -> Double)
+    {
+        if(operandStack.count >= 2)
+        {
+            displayValue = operation(operandStack.removeLast(),  operandStack.removeLast());
+            enter();
+        }
+    }
+    
+    func performCoreOperation(operation: Double -> Double)
+    {
+        if(operandStack.count >= 1)
+        {
+            displayValue = operation(operandStack.removeLast());
+            enter();
+        }
+    }
+    
+    
+    func multiply(op1: Double, op2: Double) -> Double{
+        return op1 * op2;
+    }
+    
+    
     
     @IBAction func appendDigit(sender: UIButton)
     {
@@ -52,11 +117,18 @@ class ViewController: UIViewController
             display.text = digit;
             userIsInTheMiddleOfTypingANumber = true;
         }
-        
-        
-        
-        //println("digit = \(digit)")
     }
 
+    @IBAction func enter()
+    {
+        userIsInTheMiddleOfTypingANumber = false;
+        
+        operandStack.append(displayValue);
+        
+        println("Operand Stack = \(operandStack)")
+        
+    }
+    
+    
 }
 
