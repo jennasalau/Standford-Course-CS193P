@@ -109,6 +109,10 @@ class ViewController: UIViewController
     @IBAction func appendDigit(sender: UIButton)
     {
         let digit = sender.currentTitle!;
+        
+        // Validate floating points
+        if(digit == "." && display.text!.rangeOfString(".") != nil) { return; }
+        
         if(userIsInTheMiddleOfTypingANumber)
         {
             display.text = display.text! + digit;
