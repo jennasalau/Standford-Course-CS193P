@@ -16,6 +16,8 @@ class ViewController: UIViewController
     */
     @IBOutlet weak var display: UILabel!;
     
+    @IBOutlet weak var historyLbl: UILabel!;
+    
     var userIsInTheMiddleOfTypingANumber = false;
     
     var operandStack = Array<Double>();
@@ -59,6 +61,15 @@ class ViewController: UIViewController
         {
             enter();
         }
+        
+        historyLbl.text = "";
+        
+        for operand in operandStack
+        {
+            historyLbl.text! = historyLbl.text! + " \(operation) ";
+        }
+        
+        historyLbl.text! = historyLbl.text! + " =";
         
         switch operation{
             case "×":
@@ -112,6 +123,18 @@ class ViewController: UIViewController
     
     
     
+    @IBAction func clear()
+    {
+        // Clear stack
+        operandStack.removeAll(keepCapacity: false);
+        
+        // Clear display
+        display.text = "\(0)";
+        historyLbl.text = "";
+        
+        userIsInTheMiddleOfTypingANumber = false
+    }
+    
     @IBAction func appendDigit(sender: UIButton)
     {
         var digit = sender.currentTitle!
@@ -137,6 +160,11 @@ class ViewController: UIViewController
         userIsInTheMiddleOfTypingANumber = false;
         
         operandStack.append(displayValue);
+        
+        historyLbl.text = "\(operandStack)"
+            .stringByReplacingOccurrencesOfString("[", withString: "", options: nil, range: nil)
+            .stringByReplacingOccurrencesOfString("]", withString: "", options: nil, range: nil)
+        
         
         println("Operand Stack = \(operandStack)")
         
