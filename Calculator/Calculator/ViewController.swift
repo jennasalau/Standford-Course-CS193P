@@ -76,6 +76,12 @@ class ViewController: UIViewController
             case "√":
                 performCoreOperation{ sqrt($0) };
                 break;
+            case "sin":
+                performCoreOperation{ sin($0) };
+                break;
+            case "cos":
+                performCoreOperation{ cos($0) };
+                break;
             default:
                 break;
         }
@@ -108,10 +114,13 @@ class ViewController: UIViewController
     
     @IBAction func appendDigit(sender: UIButton)
     {
-        let digit = sender.currentTitle!;
+        var digit = sender.currentTitle!
         
         // Validate floating points
         if(digit == "." && display.text!.rangeOfString(".") != nil) { return; }
+        
+        // Handle PI
+        if(digit == "π") {digit = "\(M_PI)"}
         
         if(userIsInTheMiddleOfTypingANumber)
         {
