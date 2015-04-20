@@ -8,6 +8,17 @@
 
 import UIKit
 
+class HistoryItem
+{
+    init(){
+        operand = ""
+        value = 0
+    }
+    
+    var operand : String
+    var value : Double
+}
+
 class ViewController: UIViewController
 {
     /*
@@ -21,6 +32,8 @@ class ViewController: UIViewController
     var userIsInTheMiddleOfTypingANumber = false;
     
     var operandStack = Array<Double>();
+    
+    var history : String = "";
     
     var displayValue: Double {
         get{
@@ -62,14 +75,12 @@ class ViewController: UIViewController
             enter();
         }
         
-        historyLbl.text = "";
-        
-        for operand in operandStack
-        {
-            historyLbl.text! = historyLbl.text! + " \(operation) ";
-        }
-        
-        historyLbl.text! = historyLbl.text! + " =";
+        // Build the equastion string first as the operation mutates the operandStack
+        var equasion = "\(operandStack) ="
+                    .stringByReplacingOccurrencesOfString("[", withString: "", options: nil, range: nil)
+                    .stringByReplacingOccurrencesOfString("]", withString: "", options: nil, range: nil)
+                    .stringByReplacingOccurrencesOfString(", ", withString: " \(operation) ", options: nil, range: nil)
+
         
         switch operation{
             case "×":
@@ -96,6 +107,10 @@ class ViewController: UIViewController
             default:
                 break;
         }
+        
+        // Reset the history label to the equasion
+        historyLbl.text = equasion
+        
     }
     
     func performOperation(operation: (Double, Double) -> Double)
@@ -143,7 +158,15 @@ class ViewController: UIViewController
         if(digit == "." && display.text!.rangeOfString(".") != nil) { return; }
         
         // Handle PI
-        if(digit == "π") {digit = "\(M_PI)"}
+        if(digit == "π")
+        {
+            // Clear the display
+            display.text = ""
+            
+            // Make the digit equal to PI
+            digit = "\(M_PI)"
+        }
+        
         
         if(userIsInTheMiddleOfTypingANumber)
         {
@@ -161,13 +184,14 @@ class ViewController: UIViewController
         
         operandStack.append(displayValue);
         
-        historyLbl.text = "\(operandStack)"
-            .stringByReplacingOccurrencesOfString("[", withString: "", options: nil, range: nil)
-            .stringByReplacingOccurrencesOfString("]", withString: "", options: nil, range: nil)
-        
-        
-        println("Operand Stack = \(operandStack)")
-        
+        if(historyLbl.text == nil || historyLbl.text == "")
+        {
+            historyLbl.text = "\(displayValue)"
+        }
+        else
+        {
+            historyLbl.text! += ", \(displayValue)"
+        }
     }
     
     
