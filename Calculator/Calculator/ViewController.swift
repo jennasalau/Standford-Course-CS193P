@@ -8,34 +8,24 @@
 
 import UIKit
 
-class HistoryItem
-{
-    init(){
-        operand = ""
-        value = 0
-    }
-    
-    var operand : String
-    var value : Double
-}
-
 class ViewController: UIViewController
 {
     /*
     *   Properties
     *   =================================================================
     */
-    @IBOutlet weak var display: UILabel!;
     
-    @IBOutlet weak var historyLbl: UILabel!;
+    @IBOutlet
+    weak var display: UILabel!;
     
-    var userIsInTheMiddleOfTypingANumber = false;
+    @IBOutlet
+    weak var historyLbl: UILabel!;
     
-    var operandStack = Array<Double>();
+    private var userIsInTheMiddleOfTypingANumber = false;
     
-    var history : String = "";
+    private var operandStack = Array<Double>();
     
-    var displayValue: Double {
+    internal var displayValue: Double {
         get{
             return NSNumberFormatter().numberFromString(display.text!)!.doubleValue;
         }
@@ -51,12 +41,14 @@ class ViewController: UIViewController
     *   =================================================================
     */
     
-    override func viewDidLoad() {
+    override
+    func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
     }
 
-    override func didReceiveMemoryWarning() {
+    override
+    func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
@@ -67,7 +59,8 @@ class ViewController: UIViewController
     *   =================================================================
     */
     
-    @IBAction func operate(sender: UIButton) {
+    @IBAction
+    func operate(sender: UIButton) {
         let operation = sender.currentTitle!;
         
         if(userIsInTheMiddleOfTypingANumber)
@@ -138,7 +131,8 @@ class ViewController: UIViewController
     
     
     
-    @IBAction func clear()
+    @IBAction
+    func clear()
     {
         // Clear stack
         operandStack.removeAll(keepCapacity: false);
@@ -150,7 +144,8 @@ class ViewController: UIViewController
         userIsInTheMiddleOfTypingANumber = false
     }
     
-    @IBAction func appendDigit(sender: UIButton)
+    @IBAction
+    func appendDigit(sender: UIButton)
     {
         var digit = sender.currentTitle!
         
@@ -178,7 +173,8 @@ class ViewController: UIViewController
         }
     }
 
-    @IBAction func enter()
+    @IBAction
+    func enter()
     {
         userIsInTheMiddleOfTypingANumber = false;
         
