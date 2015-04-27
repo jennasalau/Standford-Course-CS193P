@@ -23,7 +23,7 @@ class ViewController: UIViewController
     
     private var userIsInTheMiddleOfTypingANumber = false;
     
-    private var operandStack = Array<Double>();
+    var brain = CalculatorBrain()
     
     internal var displayValue: Double {
         get{
@@ -61,81 +61,28 @@ class ViewController: UIViewController
     
     @IBAction
     func operate(sender: UIButton) {
-        let operation = sender.currentTitle!;
         
         if(userIsInTheMiddleOfTypingANumber)
         {
             enter();
         }
         
-        // Build the equastion string first as the operation mutates the operandStack
-        var equasion = "\(operandStack) ="
-                    .stringByReplacingOccurrencesOfString("[", withString: "", options: nil, range: nil)
-                    .stringByReplacingOccurrencesOfString("]", withString: "", options: nil, range: nil)
-                    .stringByReplacingOccurrencesOfString(", ", withString: " \(operation) ", options: nil, range: nil)
-
-        
-        switch operation{
-            case "×":
-                performOperation{ $0 * $1};
-                break;
-            case "÷":
-                performOperation{ $1 / $0};
-                break;
-            case "+":
-                performOperation{ $0 + $1};
-                break;
-            case "−":
-                performOperation{ $1 * $0};
-                break;
-            case "√":
-                performCoreOperation{ sqrt($0) };
-                break;
-            case "sin":
-                performCoreOperation{ sin($0) };
-                break;
-            case "cos":
-                performCoreOperation{ cos($0) };
-                break;
-            default:
-                break;
-        }
-        
-        // Reset the history label to the equasion
-        historyLbl.text = equasion
-        
-    }
-    
-    func performOperation(operation: (Double, Double) -> Double)
-    {
-        if(operandStack.count >= 2)
-        {
-            displayValue = operation(operandStack.removeLast(),  operandStack.removeLast());
-            enter();
+        if let operation = sender.currentTitle {
+            if let result = brain.performOperation(operation){
+                displayValue = result
+            }
+            else
+            {
+                displayValue = 0
+            }
         }
     }
-    
-    func performCoreOperation(operation: Double -> Double)
-    {
-        if(operandStack.count >= 1)
-        {
-            displayValue = operation(operandStack.removeLast());
-            enter();
-        }
-    }
-    
-    
-    func multiply(op1: Double, op2: Double) -> Double{
-        return op1 * op2;
-    }
-    
-    
     
     @IBAction
     func clear()
     {
         // Clear stack
-        operandStack.removeAll(keepCapacity: false);
+        
         
         // Clear display
         display.text = "\(0)";
@@ -178,7 +125,16 @@ class ViewController: UIViewController
     {
         userIsInTheMiddleOfTypingANumber = false;
         
-        operandStack.append(displayValue);
+        if let result = brain.pushOperand(displayValue)
+        {
+            displayValue = result
+        }
+        else
+        {
+            //TODO: Handle nil (ie make displayValue an optional)
+            displayValue = 0 //displayValue = nil
+        }
+        
         
         if(historyLbl.text == nil || historyLbl.text == "")
         {
