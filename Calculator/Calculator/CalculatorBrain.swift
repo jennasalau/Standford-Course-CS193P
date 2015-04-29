@@ -43,13 +43,14 @@ class CalculatorBrain
         
         var description: String {
             get{
-                switch self{
-                case .Operand(let operand):
-                    return "\(operand)"
-                case .UniaryOperation(let symbol, _):
-                    return symbol
-                case .BinaryOperation(let symbol, _):
-                    return symbol
+                switch self
+                {
+                    case .Operand(let operand):
+                        return "\(operand)"
+                    case .UniaryOperation(let symbol, _):
+                        return symbol
+                    case .BinaryOperation(let symbol, _):
+                        return symbol
                 }
             }
         }
@@ -94,11 +95,18 @@ class CalculatorBrain
         return (nil, ops)
     }
     
-    
     func evaluate() -> Double? {
         let (result, remainder) = evaluate(opStack)
-        println("\(opStack) = \(result) with \(remainder) left over")
         return result
+    }
+    
+    func evaluate() -> (Double?, String) {
+        let (result, remainder) = evaluate(opStack)
+        let equasion = "\(opStack) ="
+            .stringByReplacingOccurrencesOfString("[", withString: "")
+            .stringByReplacingOccurrencesOfString("]", withString: "")
+        
+        return (result, equasion)
     }
     
     func pushOperand(operand: Double) -> Double? {
@@ -112,6 +120,14 @@ class CalculatorBrain
         }
         
         return evaluate()
+    }
+    
+    func performOperation(symbol: String) -> (Double?, String) {
+        if let operation = knownOps[symbol] {
+            opStack.append(operation)
+        }
+        let (result, history) = evaluate()
+        return (result, history)
     }
     
 }

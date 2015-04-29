@@ -68,8 +68,12 @@ class ViewController: UIViewController
         }
         
         if let operation = sender.currentTitle {
-            if let result = brain.performOperation(operation){
-                displayValue = result
+            
+            let (result, history) = brain.performOperation(operation)
+            
+            if (result != nil) {
+                displayValue = result!
+                historyLbl.text = history
             }
             else
             {
@@ -114,7 +118,8 @@ class ViewController: UIViewController
         {
             display.text = display.text! + digit;
         }
-        else {
+        else
+        {
             display.text = digit;
             userIsInTheMiddleOfTypingANumber = true;
         }
@@ -133,16 +138,6 @@ class ViewController: UIViewController
         {
             //TODO: Handle nil (ie make displayValue an optional)
             displayValue = 0 //displayValue = nil
-        }
-        
-        
-        if(historyLbl.text == nil || historyLbl.text == "")
-        {
-            historyLbl.text = "\(displayValue)"
-        }
-        else
-        {
-            historyLbl.text! += ", \(displayValue)"
         }
     }
     
